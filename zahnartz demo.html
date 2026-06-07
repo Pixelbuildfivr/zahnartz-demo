@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Weber Dental – Ihre Zahnarztpraxis in Stuttgart</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a5fad; --light-blue: #e8f1fb; --white: #ffffff;
+    --off-white: #f8fafd; --dark: #0d1b2a; --text: #2d3748;
+    --muted: #718096; --border: #e2e8f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+
+  /* LOADER */
+  #loader {
+    position: fixed; inset: 0; background: #fff; z-index: 9999;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1.5rem;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; }
+  .loader-logo { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--dark); }
+  .loader-logo span { color: var(--blue); }
+  .loader-bar { width: 200px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .loader-fill { height: 100%; background: var(--blue); border-radius: 2px; animation: loadFill 1.2s cubic-bezier(0.4,0,0.2,1) forwards; }
+  @keyframes loadFill { from { width: 0; } to { width: 100%; } }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 0.5px solid rgba(0,0,0,0.08); padding: 0 5%;
+    display: flex; align-items: center; justify-content: space-between; height: 72px;
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.06); }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 38px; height: 38px; background: var(--blue); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: transform 0.3s; }
+  .logo:hover .logo-icon { transform: rotate(-5deg) scale(1.05); }
+  .logo-name { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--dark); }
+  .logo-name span { color: var(--blue); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.25s; position: relative; }
+  .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--blue); transition: width 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .nav-links a:hover { color: var(--blue); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-actions { display: flex; align-items: center; gap: 1rem; }
+  .nav-tel { color: var(--blue); font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+  .nav-cta { background: var(--blue); color: #fff; padding: 10px 22px; border-radius: 100px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .nav-cta:hover { background: #1450a0; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(26,95,173,0.35); }
+
+  /* HERO */
+  .hero { min-height: 100vh; padding-top: 72px; display: grid; grid-template-columns: 1fr 1fr; background: var(--off-white); }
+  .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 5rem; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--light-blue); color: var(--blue); padding: 6px 14px;
+    border-radius: 100px; font-size: 0.78rem; font-weight: 600; margin-bottom: 2rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.7s 1.4s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  .hero-left h1 {
+    font-family: 'Fraunces', serif; font-size: clamp(2.5rem, 4vw, 3.8rem);
+    line-height: 1.1; color: var(--dark); margin-bottom: 1.5rem;
+    opacity: 0; transform: translateY(24px);
+    animation: fadeUp 0.8s 1.55s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  .hero-left h1 em { color: var(--blue); font-style: italic; }
+  .hero-left p {
+    color: var(--muted); font-weight: 300; line-height: 1.8; max-width: 420px; margin-bottom: 2.5rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.8s 1.7s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.8s 1.85s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  .btn-primary { background: var(--blue); color: #fff; padding: 14px 28px; border-radius: 100px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+  .btn-primary:hover { background: #1450a0; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(26,95,173,0.35); }
+  .btn-secondary { border: 1.5px solid var(--border); color: var(--text); padding: 14px 28px; border-radius: 100px; font-weight: 500; font-size: 0.9rem; text-decoration: none; transition: all 0.3s; }
+  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+  .hero-trust {
+    display: flex; gap: 2rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.8s 2s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  .trust-item { text-align: center; }
+  .trust-num { font-family: 'Fraunces', serif; font-size: 1.8rem; color: var(--blue); }
+  .trust-label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  /* HERO CARD */
+  .hero-right { background: var(--blue); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .hero-right::before { content: '🦷'; font-size: 22rem; opacity: 0.06; position: absolute; transform: rotate(20deg); animation: floatEmoji 6s ease-in-out infinite; }
+  @keyframes floatEmoji { 0%,100% { transform: rotate(20deg) translateY(0); } 50% { transform: rotate(20deg) translateY(-20px); } }
+  .hero-card {
+    background: #fff; border-radius: 20px; padding: 2.5rem; width: 360px;
+    position: relative; z-index: 1; box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+    opacity: 0; transform: translateY(30px) scale(0.97);
+    animation: cardAppear 0.9s 1.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes cardAppear { to { opacity: 1; transform: translateY(0) scale(1); } }
+  .hero-card h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--dark); margin-bottom: 0.5rem; }
+
+  /* CALENDAR PICKER */
+  .calendar-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .cal-btn { background: none; border: 1px solid var(--border); border-radius: 8px; width: 32px; height: 32px; cursor: pointer; font-size: 1rem; transition: all 0.2s; color: var(--text); }
+  .cal-btn:hover { background: var(--light-blue); border-color: var(--blue); color: var(--blue); }
+  .cal-month { font-weight: 600; font-size: 0.9rem; color: var(--dark); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 1rem; }
+  .cal-day-label { text-align: center; font-size: 0.7rem; color: var(--muted); font-weight: 600; padding: 4px 0; }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    border-radius: 8px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+    color: var(--text); font-weight: 500;
+  }
+  .cal-day:hover:not(.disabled):not(.empty) { background: var(--light-blue); color: var(--blue); transform: scale(1.1); }
+  .cal-day.selected { background: var(--blue); color: #fff; transform: scale(1.1); box-shadow: 0 4px 12px rgba(26,95,173,0.4); }
+  .cal-day.today { border: 1.5px solid var(--blue); color: var(--blue); }
+  .cal-day.disabled { color: #ddd; cursor: not-allowed; }
+  .cal-day.empty { cursor: default; }
+
+  /* TIME SLOTS */
+  .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 1.2rem; }
+  .slot {
+    border: 1.5px solid var(--border); border-radius: 10px; padding: 8px 4px;
+    text-align: center; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1); color: var(--text);
+  }
+  .slot:hover:not(.taken) { border-color: var(--blue); background: var(--light-blue); color: var(--blue); transform: scale(1.05); }
+  .slot.active { background: var(--blue); border-color: var(--blue); color: #fff; transform: scale(1.05); box-shadow: 0 4px 12px rgba(26,95,173,0.35); }
+  .slot.taken { background: #f7f7f7; color: #ccc; cursor: not-allowed; text-decoration: line-through; }
+  .selected-info { font-size: 0.8rem; color: var(--blue); font-weight: 600; margin-bottom: 1rem; min-height: 1.2em; text-align: center; }
+  .book-btn {
+    width: 100%; background: var(--blue); color: #fff; border: none; padding: 14px; border-radius: 100px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .book-btn:hover { background: #1450a0; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,95,173,0.4); }
+  .card-note { text-align: center; font-size: 0.75rem; color: var(--muted); margin-top: 0.8rem; }
+
+  /* REVEAL ANIMATIONS */
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+  .reveal-scale { opacity: 0; transform: scale(0.94); transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1), transform 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .reveal-scale.visible { opacity: 1; transform: scale(1); }
+  .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; }
+  .delay-3 { transition-delay: 0.3s; } .delay-4 { transition-delay: 0.4s; }
+  .delay-5 { transition-delay: 0.5s; } .delay-6 { transition-delay: 0.6s; }
+
+  /* SECTIONS */
+  section { padding: 6rem 5%; }
+  .section-tag { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--blue); font-weight: 600; margin-bottom: 0.5rem; }
+  .section-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); color: var(--dark); line-height: 1.2; }
+  .section-sub { color: var(--muted); font-weight: 300; line-height: 1.8; max-width: 520px; margin-top: 1rem; }
+
+  /* SERVICES */
+  .services { background: var(--white); }
+  .services-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem; flex-wrap: wrap; gap: 2rem; }
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .service-card {
+    border: 1px solid var(--border); border-radius: 20px; padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1); cursor: default; background: #fff;
+  }
+  .service-card:hover { border-color: transparent; box-shadow: 0 20px 50px rgba(26,95,173,0.12); transform: translateY(-6px); }
+  .service-emoji { font-size: 2.5rem; margin-bottom: 1.2rem; display: block; transition: transform 0.3s; }
+  .service-card:hover .service-emoji { transform: scale(1.2) rotate(-5deg); }
+  .service-card h3 { font-size: 1rem; font-weight: 600; color: var(--dark); margin-bottom: 0.6rem; }
+  .service-card p { font-size: 0.88rem; color: var(--muted); font-weight: 300; line-height: 1.7; margin-bottom: 1rem; }
+  .service-price { font-size: 0.85rem; font-weight: 600; color: var(--blue); }
+
+  /* STATS COUNTER */
+  .stats-section { background: var(--blue); padding: 4rem 5%; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; max-width: 900px; margin: 0 auto; text-align: center; }
+  .stat-big { color: #fff; }
+  .stat-big .num { font-family: 'Fraunces', serif; font-size: 3rem; line-height: 1; display: block; }
+  .stat-big .label { font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; }
+
+  /* TEAM */
+  .team { background: var(--off-white); }
+  .team-header { text-align: center; margin-bottom: 4rem; }
+  .team-header .section-sub { margin: 1rem auto 0; }
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto; }
+  .team-card { background: #fff; border-radius: 20px; padding: 2rem; text-align: center; border: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .team-card:hover { box-shadow: 0 20px 50px rgba(0,0,0,0.08); transform: translateY(-4px); border-color: transparent; }
+  .team-avatar { width: 100px; height: 100px; border-radius: 50%; background: var(--light-blue); margin: 0 auto 1.2rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; border: 3px solid var(--blue); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  .team-card:hover .team-avatar { transform: scale(1.08); }
+  .team-card h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--dark); margin-bottom: 0.3rem; }
+  .team-card .role { font-size: 0.82rem; color: var(--blue); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+  .team-card p { font-size: 0.87rem; color: var(--muted); font-weight: 300; line-height: 1.7; }
+
+  /* REVIEWS */
+  .reviews { background: var(--dark); }
+  .reviews .section-title { color: #fff; }
+  .reviews .section-tag { color: #6ba3e0; }
+  .reviews-header { text-align: center; margin-bottom: 4rem; }
+  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1100px; margin: 0 auto; }
+  .review-card { background: #1a2d42; border-radius: 20px; padding: 2rem; border: 1px solid #2a3f55; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .review-card:hover { transform: translateY(-4px); border-color: #3a5f82; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+  .stars { color: #f5c518; font-size: 1rem; margin-bottom: 1rem; letter-spacing: 2px; }
+  .review-card p { color: #94a3b8; font-size: 0.9rem; font-weight: 300; line-height: 1.8; margin-bottom: 1.5rem; font-style: italic; }
+  .reviewer { display: flex; align-items: center; gap: 12px; }
+  .reviewer-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+  .reviewer-name { font-weight: 600; color: #fff; font-size: 0.9rem; }
+  .reviewer-date { font-size: 0.78rem; color: #64748b; }
+
+  /* FAQ */
+  .faq { background: var(--white); }
+  .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; max-width: 1100px; margin: 3rem auto 0; align-items: start; }
+  .faq-item { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 0.8rem; transition: border-color 0.3s; }
+  .faq-item.open { border-color: var(--blue); }
+  .faq-q { padding: 1.2rem 1.5rem; font-weight: 600; font-size: 0.92rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--dark); transition: background 0.2s; user-select: none; }
+  .faq-q:hover { background: var(--off-white); }
+  .faq-icon { width: 24px; height: 24px; border-radius: 50%; background: var(--light-blue); display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--blue); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), background 0.3s; flex-shrink: 0; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--blue); color: #fff; }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.3s; font-size: 0.88rem; color: var(--muted); font-weight: 300; line-height: 1.8; padding: 0 1.5rem; }
+  .faq-item.open .faq-a { max-height: 200px; padding: 0 1.5rem 1.2rem; }
+  .faq-side { background: var(--light-blue); border-radius: 20px; padding: 2.5rem; }
+  .faq-side h3 { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--dark); margin-bottom: 1rem; }
+  .faq-side p { color: var(--muted); font-size: 0.9rem; font-weight: 300; line-height: 1.8; margin-bottom: 1.5rem; }
+  .faq-contact-btn { display: block; background: var(--blue); color: #fff; padding: 14px; text-align: center; border-radius: 100px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.3s; }
+  .faq-contact-btn:hover { background: #1450a0; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,95,173,0.35); }
+
+  /* CONTACT */
+  .contact { background: var(--off-white); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1000px; margin: 3rem auto 0; }
+  .contact-info h3 { font-family: 'Fraunces', serif; font-size: 1.6rem; color: var(--dark); margin-bottom: 2rem; }
+  .info-block { display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: flex-start; }
+  .info-icon { width: 44px; height: 44px; background: var(--light-blue); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  .info-block:hover .info-icon { transform: scale(1.1) rotate(-5deg); }
+  .info-block h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); font-weight: 600; margin-bottom: 0.3rem; }
+  .info-block p { font-size: 0.9rem; color: var(--text); font-weight: 300; line-height: 1.7; }
+  .map-placeholder { background: var(--light-blue); border-radius: 14px; height: 180px; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin-top: 1.5rem; border: 1px solid #c5d9f5; }
+  .contact-form { background: #fff; border-radius: 20px; padding: 2.5rem; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 4px 30px rgba(0,0,0,0.05); }
+  .contact-form h3 { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--dark); margin-bottom: 0.5rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-input {
+    border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; color: var(--text);
+    outline: none; transition: all 0.25s cubic-bezier(0.4,0,0.2,1); background: #fff; width: 100%;
+  }
+  .form-input::placeholder { color: #b0bec5; }
+  .form-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(26,95,173,0.08); transform: translateY(-1px); }
+  select.form-input { cursor: pointer; }
+  textarea.form-input { resize: vertical; min-height: 100px; }
+  .form-submit {
+    background: var(--blue); color: #fff; border: none; padding: 14px; border-radius: 100px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  .form-submit:hover { background: #1450a0; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(26,95,173,0.35); }
+
+  /* FOOTER */
+  footer { background: var(--dark); padding: 3rem 5%; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; max-width: 1100px; margin: 0 auto 2rem; }
+  .footer-brand .logo-name { color: #fff; font-size: 1.3rem; }
+  .footer-brand p { color: #64748b; font-size: 0.85rem; font-weight: 300; line-height: 1.8; margin-top: 1rem; max-width: 250px; }
+  .footer-col h4 { color: #fff; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.2rem; }
+  .footer-col a { display: block; color: #64748b; text-decoration: none; font-size: 0.85rem; margin-bottom: 0.6rem; transition: color 0.25s; }
+  .footer-col a:hover { color: #6ba3e0; }
+  .footer-bottom { border-top: 1px solid #1a2d42; padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; max-width: 1100px; margin: 0 auto; }
+  .footer-bottom p { color: #475569; font-size: 0.82rem; }
+
+  /* SCROLL TO TOP */
+  #scrollTop {
+    position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px;
+    background: var(--blue); color: #fff; border: none; border-radius: 50%;
+    cursor: pointer; font-size: 1.2rem; opacity: 0; transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1); z-index: 50; box-shadow: 0 4px 15px rgba(26,95,173,0.4);
+  }
+  #scrollTop.visible { opacity: 1; transform: translateY(0); }
+  #scrollTop:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(26,95,173,0.5); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { min-height: 50vh; }
+    .hero-left { padding: 3rem 2rem; }
+    .services-grid, .reviews-grid, .stats-grid { grid-template-columns: 1fr 1fr; }
+    .faq-grid, .contact-grid, .form-row { grid-template-columns: 1fr; gap: 1.5rem; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">Dr. <span>Weber</span> Dental</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<nav id="nav">
+  <div class="logo">
+    <div class="logo-icon">🦷</div>
+    <div class="logo-name">Dr. <span>Weber</span> Dental</div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#services">Leistungen</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#reviews">Bewertungen</a></li>
+    <li><a href="#contact">Kontakt</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="tel:+497111234567" class="nav-tel">0711 123 456 7</a>
+    <a href="#contact" class="nav-cta">Termin buchen</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-badge">⭐ 4.9 · Über 800 Bewertungen</div>
+    <h1>Ihr Lächeln<br>in den besten<br><em>Händen</em></h1>
+    <p>Moderne Zahnmedizin mit Herz — Dr. Weber und sein Team behandeln Sie mit höchster Sorgfalt, modernster Technik und einem echten Lächeln.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Termin online buchen</a>
+      <a href="#services" class="btn-secondary">Unsere Leistungen</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item"><div class="trust-num" data-count="20">0</div><div class="trust-label">Jahre Erfahrung</div></div>
+      <div class="trust-item"><div class="trust-num" data-count="800">0</div><div class="trust-label">Bewertungen</div></div>
+      <div class="trust-item"><div class="trust-num">4.9★</div><div class="trust-label">Durchschnitt</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-card">
+      <h3>Termin buchen</h3>
+      <div class="calendar-nav">
+        <button class="cal-btn" id="prevMonth">‹</button>
+        <span class="cal-month" id="calMonth"></span>
+        <button class="cal-btn" id="nextMonth">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="time-slots" id="timeSlots"></div>
+      <div class="selected-info" id="selectedInfo">Bitte Datum & Uhrzeit wählen</div>
+      <button class="book-btn">Termin bestätigen</button>
+      <p class="card-note">Kostenlose Stornierung bis 24h vorher</p>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="services-top">
+    <div class="reveal-left">
+      <p class="section-tag">Was wir anbieten</p>
+      <h2 class="section-title">Unsere Leistungen</h2>
+      <p class="section-sub">Von der Vorsorge bis zur ästhetischen Zahnmedizin — alles aus einer Hand.</p>
+    </div>
+    <a href="#contact" class="btn-primary reveal-right">Alle Leistungen anfragen</a>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal delay-1"><span class="service-emoji">🔍</span><h3>Vorsorge & Prophylaxe</h3><p>Regelmäßige Kontrolluntersuchungen und professionelle Zahnreinigung für langfristige Zahngesundheit.</p><div class="service-price">ab 80 €</div></div>
+    <div class="service-card reveal delay-2"><span class="service-emoji">✨</span><h3>Zahnaufhellung</h3><p>Professionelles Bleaching für ein strahlendes Lächeln — schonend, effektiv und langanhaltend.</p><div class="service-price">ab 299 €</div></div>
+    <div class="service-card reveal delay-3"><span class="service-emoji">🦷</span><h3>Zahnersatz</h3><p>Kronen, Brücken und Implantate in höchster Qualität — für ein natürliches und funktionales Ergebnis.</p><div class="service-price">ab 499 €</div></div>
+    <div class="service-card reveal delay-4"><span class="service-emoji">😬</span><h3>Kieferorthopädie</h3><p>Invisalign und klassische Zahnspangen für Kinder, Jugendliche und Erwachsene.</p><div class="service-price">ab 1.499 €</div></div>
+    <div class="service-card reveal delay-5"><span class="service-emoji">💊</span><h3>Angstpatienten</h3><p>Behandlung unter Beruhigungsmittel oder Vollnarkose — wir nehmen Ihre Angst ernst.</p><div class="service-price">auf Anfrage</div></div>
+    <div class="service-card reveal delay-6"><span class="service-emoji">👶</span><h3>Kinderzahnheilkunde</h3><p>Altersgerechte Behandlung in einer kindgerechten, angstfreien Atmosphäre.</p><div class="service-price">ab 40 €</div></div>
+  </div>
+</section>
+
+<div class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-big reveal delay-1"><span class="num" data-count="20">0</span><span class="label">Jahre Erfahrung</span></div>
+    <div class="stat-big reveal delay-2"><span class="num" data-count="800">0</span><span class="label">Zufriedene Patienten</span></div>
+    <div class="stat-big reveal delay-3"><span class="num" data-count="98">0</span><span class="label">% Weiterempfehlung</span></div>
+    <div class="stat-big reveal delay-4"><span class="num" data-count="6">0</span><span class="label">Spezialisierungen</span></div>
+  </div>
+</div>
+
+<section class="team" id="team">
+  <div class="team-header reveal">
+    <p class="section-tag">Unser Team</p>
+    <h2 class="section-title">Experten die sich kümmern</h2>
+    <p class="section-sub">Unser erfahrenes Team behandelt Sie mit Fachkompetenz und echtem Einfühlungsvermögen.</p>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal-scale delay-1"><div class="team-avatar">👨‍⚕️</div><h3>Dr. Thomas Weber</h3><div class="role">Zahnarzt & Inhaber</div><p>20 Jahre Erfahrung, Spezialist für Implantologie und ästhetische Zahnmedizin.</p></div>
+    <div class="team-card reveal-scale delay-2"><div class="team-avatar">👩‍⚕️</div><h3>Dr. Sarah Müller</h3><div class="role">Kieferorthopädin</div><p>Spezialistin für Invisalign und moderne Zahnspangen für alle Altersgruppen.</p></div>
+    <div class="team-card reveal-scale delay-3"><div class="team-avatar">👩</div><h3>Lisa Schneider</h3><div class="role">Dentalhygienikerin</div><p>Expertin für Prophylaxe und professionelle Zahnreinigung.</p></div>
+  </div>
+</section>
+
+<section class="reviews" id="reviews">
+  <div class="reviews-header reveal">
+    <p class="section-tag">Was Patienten sagen</p>
+    <h2 class="section-title">Bewertungen</h2>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card reveal delay-1"><div class="stars">★★★★★</div><p>"Endlich eine Zahnarztpraxis wo ich mich wirklich wohlfühle. Dr. Weber ist super einfühlsam und erklärt alles verständlich."</p><div class="reviewer"><div class="reviewer-avatar">😊</div><div><div class="reviewer-name">Anna K.</div><div class="reviewer-date">vor 2 Wochen · Google</div></div></div></div>
+    <div class="review-card reveal delay-2"><div class="stars">★★★★★</div><p>"Das Bleaching war top! Meine Zähne sind so weiß wie nie. Das Team ist super nett und die Praxis sehr modern ausgestattet."</p><div class="reviewer"><div class="reviewer-avatar">😄</div><div><div class="reviewer-name">Michael S.</div><div class="reviewer-date">vor 1 Monat · Google</div></div></div></div>
+    <div class="review-card reveal delay-3"><div class="stars">★★★★★</div><p>"Als Angstpatient war ich sehr skeptisch, aber das Team hat mir alle Angst genommen. Einfühlsam, geduldig und professionell."</p><div class="reviewer"><div class="reviewer-avatar">🙂</div><div><div class="reviewer-name">Julia M.</div><div class="reviewer-date">vor 3 Wochen · Jameda</div></div></div></div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <p class="section-tag reveal">Häufige Fragen</p>
+  <h2 class="section-title reveal">FAQ</h2>
+  <div class="faq-grid">
+    <div class="faq-list reveal-left">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Nehmen Sie neue Patienten an?<div class="faq-icon">+</div></div><div class="faq-a">Ja, wir freuen uns immer über neue Patienten! Sie können ganz einfach online einen Termin buchen oder uns anrufen.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Welche Krankenkassen akzeptieren Sie?<div class="faq-icon">+</div></div><div class="faq-a">Wir behandeln Patienten aller gesetzlichen und privaten Krankenkassen. Sprechen Sie uns einfach an!</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Bieten Sie Notfalltermine an?<div class="faq-icon">+</div></div><div class="faq-a">Ja! Für Notfälle halten wir täglich freie Termine bereit. Rufen Sie uns morgens an — wir finden eine Lösung.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Wie lange dauert eine Zahnreinigung?<div class="faq-icon">+</div></div><div class="faq-a">Eine professionelle Zahnreinigung dauert in der Regel 45–60 Minuten und wird von unserer Dentalhygienikerin durchgeführt.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Gibt es Parkplätze bei Ihrer Praxis?<div class="faq-icon">+</div></div><div class="faq-a">Direkt vor der Praxis stehen kostenlose Parkplätze zur Verfügung. Alternativ ist die Praxis gut mit dem ÖPNV erreichbar.</div></div>
+    </div>
+    <div class="faq-side reveal-right">
+      <h3>Haben Sie weitere Fragen?</h3>
+      <p>Unser Team beantwortet gerne alle Ihre Fragen — telefonisch, per E-Mail oder direkt beim Termin.</p>
+      <a href="#contact" class="faq-contact-btn">Jetzt Kontakt aufnehmen</a>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <p class="section-tag reveal">Termin & Kontakt</p>
+  <h2 class="section-title reveal">Besuchen Sie uns</h2>
+  <div class="contact-grid">
+    <div class="contact-info reveal-left">
+      <h3>So erreichen Sie uns</h3>
+      <div class="info-block"><div class="info-icon">📍</div><div><h4>Adresse</h4><p>Königstraße 88<br>70173 Stuttgart</p></div></div>
+      <div class="info-block"><div class="info-icon">🕐</div><div><h4>Öffnungszeiten</h4><p>Mo, Di, Do: 8:00 – 18:00<br>Mi, Fr: 8:00 – 14:00</p></div></div>
+      <div class="info-block"><div class="info-icon">📞</div><div><h4>Telefon</h4><p>0711 123 456 7</p></div></div>
+      <div class="info-block"><div class="info-icon">📧</div><div><h4>E-Mail</h4><p>info@dr-weber-dental.de</p></div></div>
+      <div class="map-placeholder">🗺️</div>
+    </div>
+    <div class="contact-form reveal-right">
+      <h3>Termin anfragen</h3>
+      <div data-fs-success style="display:none; background:#e8f5e9; color:#2e7d32; padding:1rem; border-radius:12px; font-weight:600; text-align:center;">✅ Vielen Dank! Wir melden uns bald bei Ihnen.</div>
+      <div data-fs-error style="display:none; background:#fdecea; color:#c62828; padding:1rem; border-radius:12px; font-size:0.85rem;"></div>
+      <form id="contact-form" action="https://formspree.io/f/xrevpzrw" method="POST">
+        <div class="form-row">
+          <input class="form-input" type="text" name="vorname" placeholder="Vorname" required data-fs-field>
+          <input class="form-input" type="text" name="nachname" placeholder="Nachname" required data-fs-field>
+        </div>
+        <input class="form-input" type="tel" name="telefon" placeholder="Telefonnummer" data-fs-field>
+        <input class="form-input" type="email" name="email" placeholder="E-Mail Adresse" required data-fs-field>
+        <select class="form-input" name="behandlung" data-fs-field>
+          <option value="" disabled selected>Behandlung wählen</option>
+          <option>Vorsorge & Prophylaxe</option>
+          <option>Zahnaufhellung</option>
+          <option>Zahnersatz / Implantat</option>
+          <option>Kieferorthopädie</option>
+          <option>Kinderzahnheilkunde</option>
+          <option>Notfalltermin</option>
+          <option>Sonstiges</option>
+        </select>
+        <textarea class="form-input" name="nachricht" placeholder="Anmerkungen oder besondere Wünsche..." data-fs-field></textarea>
+        <button class="form-submit" type="submit" data-fs-submit-btn>Termin anfragen</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo"><div class="logo-icon">🦷</div><div class="logo-name" style="color:#fff">Dr. <span>Weber</span> Dental</div></div>
+      <p>Moderne Zahnmedizin mit Herz — seit 2004 Ihr vertrauensvoller Partner für Zahngesundheit in Stuttgart.</p>
+    </div>
+    <div class="footer-col"><h4>Leistungen</h4><a href="#">Prophylaxe</a><a href="#">Bleaching</a><a href="#">Implantate</a><a href="#">Kieferorthopädie</a></div>
+    <div class="footer-col"><h4>Praxis</h4><a href="#">Über uns</a><a href="#">Team</a><a href="#">Bewertungen</a><a href="#">Karriere</a></div>
+    <div class="footer-col"><h4>Kontakt</h4><a href="#">0711 123 456 7</a><a href="#">info@dr-weber-dental.de</a><a href="#">Königstraße 88, Stuttgart</a></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Dr. Weber Dental · Alle Rechte vorbehalten</p>
+    <p>Impressum · Datenschutz · Cookie-Einstellungen</p>
+  </div>
+</footer>
+
+<script>
+// LOADER
+window.addEventListener('load', () => {
+  setTimeout(() => { document.getElementById('loader').classList.add('hidden'); }, 1300);
+});
+
+// NAV SCROLL
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+
+// REVEAL ON SCROLL
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => observer.observe(el));
+
+// COUNTER ANIMATION
+function animateCount(el, target, duration = 1800) {
+  let start = 0; const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    start += step;
+    if (start >= target) { el.textContent = target + (el.dataset.suffix || ''); clearInterval(timer); }
+    else { el.textContent = Math.floor(start) + (el.dataset.suffix || ''); }
+  }, 16);
+}
+const countObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !e.target.dataset.counted) {
+      e.target.dataset.counted = true;
+      animateCount(e.target, parseInt(e.target.dataset.count));
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+
+// CALENDAR
+let currentDate = new Date();
+let selectedDate = null, selectedTime = null;
+const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const days = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+const allSlots = ['08:00','09:00','10:30','11:00','14:00','15:00','16:30'];
+const takenSlots = ['08:00','15:00'];
+
+function renderCalendar() {
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  document.getElementById('calMonth').textContent = months[m] + ' ' + y;
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = days.map(d => `<div class="cal-day-label">${d}</div>`).join('');
+  const first = new Date(y, m, 1);
+  let startDay = first.getDay() - 1; if (startDay < 0) startDay = 6;
+  for (let i = 0; i < startDay; i++) grid.innerHTML += `<div class="cal-day empty"></div>`;
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const today = new Date();
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(y, m, d);
+    const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const isSel = selectedDate && date.toDateString() === selectedDate.toDateString();
+    const isToday = date.toDateString() === today.toDateString();
+    const cls = ['cal-day', isPast ? 'disabled' : '', isSel ? 'selected' : '', isToday && !isSel ? 'today' : ''].filter(Boolean).join(' ');
+    grid.innerHTML += `<div class="${cls}" ${!isPast ? `onclick="selectDate(${y},${m},${d})"` : ''}>${d}</div>`;
+  }
+}
+
+function selectDate(y, m, d) {
+  selectedDate = new Date(y, m, d); selectedTime = null;
+  renderCalendar(); renderSlots(); updateInfo();
+}
+
+function renderSlots() {
+  const slots = document.getElementById('timeSlots');
+  if (!selectedDate) { slots.innerHTML = ''; return; }
+  slots.innerHTML = allSlots.map(t => {
+    const taken = takenSlots.includes(t);
+    const active = t === selectedTime;
+    return `<div class="slot ${taken?'taken':''} ${active?'active':''}" ${!taken?`onclick="selectTime('${t}')"`:''}>${t}</div>`;
+  }).join('');
+}
+
+function selectTime(t) {
+  selectedTime = t; renderSlots(); updateInfo();
+}
+
+function updateInfo() {
+  const info = document.getElementById('selectedInfo');
+  if (selectedDate && selectedTime) {
+    const d = selectedDate;
+    info.textContent = `✓ ${d.getDate()}. ${months[d.getMonth()]} um ${selectedTime} Uhr`;
+    info.style.color = '#16a34a';
+  } else if (selectedDate) {
+    info.textContent = 'Bitte Uhrzeit wählen';
+    info.style.color = 'var(--blue)';
+  } else {
+    info.textContent = 'Bitte Datum & Uhrzeit wählen';
+    info.style.color = 'var(--muted)';
+  }
+}
+
+document.getElementById('prevMonth').onclick = () => { currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); };
+document.getElementById('nextMonth').onclick = () => { currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); };
+renderCalendar();
+
+// FAQ
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+<script>
+  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+  formspree('initForm', { formElement: '#contact-form', formId: 'xrevpzrw' });
+</script>
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
+</body>
+</html>
